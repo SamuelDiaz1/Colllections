@@ -5,14 +5,15 @@ public class Tienda implements Comparator<Producto> {
     public Tienda(){
         
     }
-    private Carrito<Producto> compare(Producto p1, Producto p2) {
-        return (p1.getPrecio() > p2.getPrecio()) ? p1 : p2;
+    @Override
+    public int compare(Producto p1, Producto p2) {
+        return Double.compare(p1.getPrecio(), p2.getPrecio());
     }
     private Producto obtenerProductoMasCaro() {
         //usa el comparador para encontrar el producto mas caro en el carrito
         Producto masCaro = null;
         for (Producto p : carrito) {      
-            if (masCaro == null || compare(p, masCaro) == p) {
+            if (masCaro == null || compare(p, masCaro) > 0) {
                 masCaro = p;
             }
         }     

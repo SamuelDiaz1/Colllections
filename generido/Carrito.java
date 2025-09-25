@@ -6,5 +6,6 @@ public class Carrito<E> {
     public void agregar(E e) {
         lista.add(e);
     }   
+    
 
 }
