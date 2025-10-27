@@ -1,194 +1,83 @@
 package arboles;
-
-// Clase Nodo: representa un nodo del árbol binario
-class Nodo {
-    int dato;           // Valor almacenado en el nodo
-    Nodo izquierdo;     // Referencia al hijo izquierdo
-    Nodo derecho;       // Referencia al hijo derecho
-
-    public Nodo(int dato) {
-        this.dato = dato;
-        this.izquierdo = null;
-        this.derecho = null;
-    }
-}
-
-// Clase principal del Árbol Binario de Búsqueda (ABB)
 public class ArbolBinario {
-    private Nodo raiz;  // Nodo raíz del árbol
+    private Nodo raiz;
 
-    public ArbolBinario() {
-        raiz = null;
+    // Insertar un valor en el árbol
+    public void insertar(int valor) {
+        raiz = insertarRec(raiz, valor);
     }
 
-    // -------------------------------------------------------------------
-    // Verificar si el árbol está vacío
-    public boolean estaVacio() {
-        return raiz == null;
-    }
-
-    // -------------------------------------------------------------------
-    // Insertar un nuevo dato en el árbol
-    public void insertar(int dato) {
-        raiz = insertarNodo(raiz, dato);
-    }
-
-    private Nodo insertarNodo(Nodo actual, int dato) {
+    private Nodo insertarRec(Nodo actual, int valor) {
         if (actual == null) {
-            return new Nodo(dato);
+            return new Nodo(valor);
         }
-
-        if (dato < actual.dato) {
-            actual.izquierdo = insertarNodo(actual.izquierdo, dato);
-        } else if (dato > actual.dato) {
-            actual.derecho = insertarNodo(actual.derecho, dato);
-        }
-        // Si el dato ya existe, no se inserta (opcional)
-        return actual;
-    }
-
-    // -------------------------------------------------------------------
-    //Buscar si existe un dato en el árbol
-    public boolean existeDato(int dato) {
-        return buscar(raiz, dato);
-    }
-
-    private boolean buscar(Nodo actual, int dato) {
-        if (actual == null) return false;
-        if (actual.dato == dato) return true;
-        return dato < actual.dato
-                ? buscar(actual.izquierdo, dato)
-                : buscar(actual.derecho, dato);
-    }
-
-    // -------------------------------------------------------------------
-    // Recorridos del árbol
-    // Imprime el recorrido inorden
-    public void recorrerInOrden() {
-        System.out.print("InOrden: ");
-        inOrden(raiz);
-        System.out.println();
-    }
-
-    private void inOrden(Nodo actual) {
-        if (actual != null) {
-            inOrden(actual.izquierdo);
-            System.out.print(actual.dato + " ");
-            inOrden(actual.derecho);
-        }
-    }
-    // Imprime el recorrido preorden
-    public void recorrerPreOrden() {
-        System.out.print("PreOrden: ");
-        preOrden(raiz);
-        System.out.println();
-    }
-
-    private void preOrden(Nodo actual) {
-        if (actual != null) {
-            System.out.print(actual.dato + " ");
-            preOrden(actual.izquierdo);
-            preOrden(actual.derecho);
-        }
-    }
-    // Imprime el recorrido postorden
-    public void recorrerPostOrden() {
-        System.out.print("PostOrden: ");
-        postOrden(raiz);
-        System.out.println();
-    }
-
-    private void postOrden(Nodo actual) {
-        if (actual != null) {
-            postOrden(actual.izquierdo);
-            postOrden(actual.derecho);
-            System.out.print(actual.dato + " ");
-        }
-    }
-
-    // -------------------------------------------------------------------
-    // Eliminar un nodo del árbol
-    public void eliminar(int dato) {
-        raiz = eliminarNodo(raiz, dato);
-    }
-
-    private Nodo eliminarNodo(Nodo actual, int dato) {
-        if (actual == null) return null;
-
-        if (dato < actual.dato) {
-            actual.izquierdo = eliminarNodo(actual.izquierdo, dato);
-        } else if (dato > actual.dato) {
-            actual.derecho = eliminarNodo(actual.derecho, dato);
-        } else {
-            // Caso 1: nodo sin hijos
-            if (actual.izquierdo == null && actual.derecho == null) {
-                return null;
-            }
-            // Caso 2: un solo hijo
-            else if (actual.izquierdo == null) {
-                return actual.derecho;
-            } else if (actual.derecho == null) {
-                return actual.izquierdo;
-            }
-            // Caso 3: dos hijos
-            else {
-                int sucesor = obtenerMinimo(actual.derecho);
-                actual.dato = sucesor;
-                actual.derecho = eliminarNodo(actual.derecho, sucesor);
-            }
+        if (valor < actual.dato) {
+            actual.izquierdo = insertarRec(actual.izquierdo, valor);
+        } else if (valor > actual.dato) {
+            actual.derecho = insertarRec(actual.derecho, valor);
         }
         return actual;
     }
 
-    // -------------------------------------------------------------------
-    //Obtener el valor mínimo del árbol
-    public int obtenerMenor() {
-        if (estaVacio()) throw new RuntimeException("Árbol vacío");
-        return obtenerMinimo(raiz);
+    // Buscar un valor en el árbol
+    public boolean buscar(int valor) {
+        return buscarRec(raiz, valor);
     }
 
-    private int obtenerMinimo(Nodo actual) {
-        return actual.izquierdo == null ? actual.dato : obtenerMinimo(actual.izquierdo);
+    private boolean buscarRec(Nodo actual, int valor) {
+        if (actual == null) {
+            return false;
+        }
+        if (actual.dato == valor) {
+            return true;
+        }
+        return valor < actual.dato
+            ? buscarRec(actual.izquierdo, valor)
+            : buscarRec(actual.derecho, valor);
     }
 
-    // -------------------------------------------------------------------
-    // Obtener el valor máximo del árbol
-    public int obtenerMayor() {
-        if (estaVacio()) throw new RuntimeException("Árbol vacío");
-        return obtenerMaximo(raiz);
+    // Recorrido Inorden
+    public String inorden() {
+        StringBuilder sb = new StringBuilder();
+        inordenRec(raiz, sb);
+        return sb.toString();
     }
 
-    private int obtenerMaximo(Nodo actual) {
-        return actual.derecho == null ? actual.dato : obtenerMaximo(actual.derecho);
+    private void inordenRec(Nodo actual, StringBuilder sb) {
+        if (actual != null) {
+            inordenRec(actual.izquierdo, sb);
+            sb.append(actual.dato).append(" ");
+            inordenRec(actual.derecho, sb);
+        }
     }
 
-    // -------------------------------------------------------------------
-    // Obtener altura del árbol
-    public int obtenerAltura() {
-        return altura(raiz);
+    // Recorrido Preorden
+    public String preorden() {
+        StringBuilder sb = new StringBuilder();
+        preordenRec(raiz, sb);
+        return sb.toString();
     }
 
-    private int altura(Nodo actual) {
-        if (actual == null) return 0;
-        return 1 + Math.max(altura(actual.izquierdo), altura(actual.derecho));
+    private void preordenRec(Nodo actual, StringBuilder sb) {
+        if (actual != null) {
+            sb.append(actual.dato).append(" ");
+            preordenRec(actual.izquierdo, sb);
+            preordenRec(actual.derecho, sb);
+        }
     }
 
-    // -------------------------------------------------------------------
-    // Contar hojas del árbol
-    public int contarHojas() {
-        return contarHojasRec(raiz);
+    // Recorrido Postorden
+    public String postorden() {
+        StringBuilder sb = new StringBuilder();
+        postordenRec(raiz, sb);
+        return sb.toString();
     }
 
-    private int contarHojasRec(Nodo actual) {
-        if (actual == null) return 0;
-        if (actual.izquierdo == null && actual.derecho == null) return 1;
-        return contarHojasRec(actual.izquierdo) + contarHojasRec(actual.derecho);
-    }
-
-    // -------------------------------------------------------------------
-    // Borrar todo el árbol
-    public void borrarArbol() {
-        raiz = null;
-        System.out.println("El árbol ha sido borrado.");
+    private void postordenRec(Nodo actual, StringBuilder sb) {
+        if (actual != null) {
+            postordenRec(actual.izquierdo, sb);
+            postordenRec(actual.derecho, sb);
+            sb.append(actual.dato).append(" ");
+        }
     }
 }
